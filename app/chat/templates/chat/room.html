@@ -4,13 +4,12 @@
     <meta charset="utf-8"/>
     <title>Chat Room</title>
     <style>
-        /* Центрирование текстового поля чата */
         #chat-log {
             display: block;
             margin: 0 auto;
-            width: 80%; /* Процент ширины экрана, которую занимает текстовое поле */
-            height: 70vh; /* Высота текстового поля, заданная в процентах высоты видимой области экрана */
-            resize: none; /* Запрет на изменение размеров текстового поля */
+            width: 80%; 
+            height: 70vh; 
+            resize: none; 
             font-size: 16px;
         }
         #chat-message-input {
@@ -34,23 +33,23 @@
     </style>
 </head>
 <body>
-    <!-- Текстовое поле для отображения сообщений чата -->
+
     <textarea id="chat-log" cols="100" rows="20"></textarea><br>
 
-    <!-- Поле ввода для ввода сообщений -->
-    <input id="chat-message-input" type="text" size="100"><br>
 
-    <!-- Кнопка для отправки сообщений -->
+    <input id="chat-message-input" type="text" placeholder="Введите сообщение" size="100"><br>
+
+
     <input id="chat-message-submit" type="button" value="Send">
 
-    <!-- Передача имени комнаты чата на фронтенд -->
+
     {{ room_name|json_script:"room-name" }}
 
     <script>
-        // Извлечение имени комнаты чата из JSON-объекта
+
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
 
-        // Создание WebSocket-соединения с сервером
+
         const chatSocket = new WebSocket(
             'ws://'
             + window.location.host
@@ -59,39 +58,38 @@
             + '/'
         );
 
-        // Обработка получения сообщений от сервера WebSocket
+
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
             document.querySelector('#chat-log').value += (data.message + '\n');
         };
 
-        // Обработка закрытия соединения
+
         chatSocket.onclose = function(e) {
             console.error('Chat socket closed unexpectedly');
         };
 
-        // Установка фокуса на поле ввода сообщений
+
         document.querySelector('#chat-message-input').focus();
 
-        // Обработка нажатия клавиши Enter в поле ввода сообщений
         document.querySelector('#chat-message-input').onkeyup = function(e) {
             if (e.key === 'Enter') {  // enter, return
                 document.querySelector('#chat-message-submit').click();
             }
         };
 
-        // Обработка нажатия кнопки отправки сообщения
+  
         document.querySelector('#chat-message-submit').onclick = function(e) {
-            // Получение текста сообщения из поля ввода
+
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
 
-            // Отправка сообщения на сервер WebSocket
+
             chatSocket.send(JSON.stringify({
                 'message': message
             }));
 
-            // Очистка поля ввода
+
             messageInputDom.value = '';
         };
     </script>
